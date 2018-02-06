@@ -3,55 +3,37 @@
 	date_default_timezone_set('America/Caracas');
 	// conector de BD 
 	require_once('tools/mypathdb.php');
+
+
 	$fullName = $_POST ['fullName'];
 	$phone = strtolower ($_POST ['phone']);
-	$email = $_POST ['inputEmail'];
-	$desde = $_POST ['desde'];
-	$hasta = $_POST ['hasta'];
-	$destination = $_POST ['destination'];
-	$anythingelse = $_POST ['anythingelse'];
-	$size = $_POST ['size'];
-	$bedrooms = $_POST ['bedrooms'];
-	$bathrooms = $_POST ['bathrooms'];
-	$amenities = $_POST ['amenities'];		
-	$photo = $_POST ['photo'];
-	$term = $_POST ['term'];	
-	$villaId = $_POST ['villaId'];	
-	$tipo = $_POST ['tipo'];
+	$email = $_POST ['email'];
 	$fecha= date("Y-m-d H:i:s"); 
+	$message = $_POST ['message'];
+	
 
 	//======================validar que el phone tenga mas de 6 caracteres=======================================
 	if ((strlen($phone)<6) and (!empty($_POST ['phone'])))
 	{
-		//===================================================Redirigir a otra pagina============================================
+		//================================tipo de error json============================================
 		$data=array("error" => '1');
 		die(json_encode($data));
 	} 
 
-	// ===============================================Grabar los datos ===============================================================
-	// ===============================================Introducir los datos en la tabla tbl_lead ==================================
-	$query = "INSERT INTO tbl_lead (fullName, phone, email, desde, hasta, destination, anythingelse, size, bedrooms, bathrooms, amenities, photo, term, fecha, villaId, tipo) VALUES ('".$fullName."','".$phone."',  '".$email."', '".$desde."', '".$hasta."', '".$destination."', '".$anythingelse."', '".$size."', '".$bedrooms."', '".$bathrooms."', '".$amenities."', '".$photo."', '".$term."', '".$fecha."', '".
-	$villaId."', '".$tipo."');";
+	// =========================Grabar los datos ===============================================================
+	// =========================Introducir los datos en la tabla tbl_lead ==================================
+	$query = "INSERT INTO tbl_lead (fullName, phone, email, fecha, message) VALUES ('".$fullName."','".$phone."',  '".$email."', '".$fecha."', '".$message. "')";
 	
 	$insertar = mysql_query($query); 
-	
 	$Id = mysql_insert_id(); //obtener id
 
 
-
-//========== obtener el ultimo ID de la tabla imagegallery
-//$queryUltimo = mysql_query("SELECT MAX(VillaId) AS id FROM villa");
-//if ($row = mysql_fetch_row($queryUltimo)) {
-//$ultimoId = trim($row[0]);
-//}	
-	
 
 	if($insertar == false) 
 	{
 		$data=array("error" => '1');
 		die(json_encode($data));
 	}
-	
 	else
 	{
 		//Los datos se han insertado correctamente.
@@ -59,74 +41,158 @@
 		$_SESSION['fullName']=$fullName;
 		$_SESSION['phone']=$phone;
 		$_SESSION['email']=$email;
-		$_SESSION['desde']=$desde;
-		$_SESSION['hasta']=$hasta;
-		$_SESSION['destination']=$destination;
-		$_SESSION['anythingelse']=$anythingelse;
+		$_SESSION['fecha']=$fecha;
+		$_SESSION['message']=$message;		
 		$_SESSION['Id']=$Id;
-		//$_SESSION['villaId']=$ultimoId;
 		//desconectar();
 		mysql_close();
 		
 	
-		// ========================================envio de correo notificandome que alguien completo el formulario ===================
+		// ===================envio de correo notificandome que alguien completo el formulario ===================
 		
-		$destino ="valbino@luxuryrentalsinternational.com";
-		//$destino ="gustabin@yahoo.com";
-		$asunto = "Contact Web Luxury Rentals International";
+		$destino="gustabin@yahoo.com";
+		$asunto = "Contacto Web Asesorias";
 		$cabeceras = "Content-type: text/html";
-		$cuerpo ="<h2>Hello, a user has registered on Luxury Rentals Internationalís website!</h2>
-		The received information is as follows:<br>		
-		<b>Name: </b>$fullName<br>
-		<b>Phone: </b>$phone<br>
-		<b>Email: </b>$email<br>
-		Speculated Travel Dates<br>
-		<b>Arriving: </b>$desde<br>
-		<b>Departing: </b>$hasta<br>
-		<b>Destination: </b>$destination<br>
-		<b>Anything else: </b>$anythingelse<br>
-		<b>Villa: </b>$villaId<br>
-		<br><br>
-  	    LRI Team<br>
-		<img src=http://www.luxuryrentalsinternational.com/go/img/lri.png />
-		<p>				
-		<br> 
-		<p></p>Designed by <br>
-		© Copyright 2016 © LUXURY RENTALS INTERNATIONAL - All rights reserved<br></h5>
-		</p>";
+		$cuerpo='<div>
+					<div style="background-color: #041947;">
+						<div style="display: inline-block;">
+					        <a href="http://tabin.life/asesorias/index.html">
+					        	<img src="http://citadr.com/artes/programacion/asesorias/images/logo-jose-gregorio-garcia.png" alt="">
+					        </a>
+				        </div>
+
+						<div style="display: inline-block; float: right;">
+							<li style="display: inline-block; color: #878888; font-family:Arial;" ><strong>P√°gina:</strong></li>
+							<li style="display: inline-block;"><a href="http://tabin.life/asesorias/index.html" style=" text-decoration: none;color: #ffffff; font-family: Arial;">http://tabin.life/asesorias/index.html</a></li>
+						</div>
+					</div>
+				</div>
+
+
+
+				<div style="background-color: #878888;">
+					<div style="height: 10px;"></div>
+					<div style="background-color: white;">
+						<div style="text-align: center;">
+							<h3 style="font-weight:700; line-height: 36px; color: #666666; font-size: 22px; font-family: Arial;">Hola</h3>
+							<h1 style="font-weight:700;line-height: 36px;color: #303030; font-size: 40px;font-family: Arial;">Gustavo</h1>
+						</div>
+
+					<div class="item">
+					    <div style="text-align: center;">
+					        <h2 style="font-weight:700;line-height: 12px;color: #303030; font-size: 14px;font-family: Arial;">
+					          Nos complace informarle que alguien ha completado el formulario de contacto de la p√°gina asesorias Jose Gregorio Garcia. 
+					          	<br>
+						        <br>La informacion ha sido enviada exitosamente. 
+						        <br>
+								<br>
+							</h2>
+						</div>
+					</div>
+					<div style="height: 10px;"></div>
+				</div>
+
+
+				<div style="background-color: #242427;">
+					<div class="footer-logo pull-left">
+						<img src="http://citadr.com/artes/programacion/asesorias/images/footer-logo.png" alt="">
+					</div>
+					<span style="color: #666666; font-size: 22px; font-family: Arial;">Copyright ¬© 2018 Kem Advisor. Todos los Derechos Reservados.</span>
+					
+					<div style="display: inline-block; float: right; margin-right: 19px;">
+						<a href="http://tabin.life/asesorias/contact.html" style="text-decoration: none;color: #666666; font-size: 22px; font-family: Arial;">Cont√°ctanos</a>
+					</div>
+				</div>
+				</div>';
+
 		
-		$yourWebsite = "luxuryrentalsinternational.com";
-		$yourEmail   = "info@luxuryrentalsinternational.com";
+		$yourWebsite = "tabin.life";
+		$yourEmail   = "info@tabin.life";
 	    $cabeceras = "From: $yourWebsite <$yourEmail>\n" . "Content-type: text/html" ;
 		mail($destino,$asunto,$cuerpo,$cabeceras);	
 		
 		
 		// ========================================envio de correo al customer ===================
 		$destino = $email;
-		$asunto = "Welcome to LUXURY RENTALS INTERNATIONAL";
+		$asunto = "Bienvenido a Asesorias JGG";
 		$cabeceras = "Content-type: text/html";
-		$cuerpo ="<h2>Dear Customer,</h2><br>
-        Thank you for contacting Luxury Rentals International. <br>
-		Thank you for choosing us as your prefered agency to complete your luxurious vacation rental. <br><br>
-		Weíve received your info and one of our agent will get in touch soon. <br>
-		While you wait, why not be social?<br><br>
-		<a href=https://www.facebook.com/Luxuryrentals1><img src=http://www.luxuryrentalsinternational.com/go/img/facebook.jpg width=155 height=43 /></a>  		
-		<br>With regards,<br>
-		The Luxury Rentals International Team<br>
-		<a href=https://www.luxuryrentalsinternational.com><img src=http://www.luxuryrentalsinternational.com/go/img/lri.png /></a> 
-		<br> 
-		<p></p>Designed by <br>
-		© Copyright 2016 © LUXURY RENTALS INTERNATIONAL - All rights reserved<br></h5>
-		</p>";
-		$yourWebsite = "luxuryrentalsinternational.com";
-		$yourEmail   = "info@luxuryrentalsinternational.com";
+		$cuerpo='<div>
+						<div style="background-color: #041947;">
+							<div style="display: inline-block;">
+						        <a href="http://tabin.life/asesorias/index.html">
+						        	<img src="http://citadr.com/artes/programacion/asesorias/images/logo-jose-gregorio-garcia.png" alt="">
+						        </a>
+					        </div>
+
+							<div style="display: inline-block; float: right;">
+								<li style="display: inline-block; color: #878888; font-family:Arial;" ><strong>P√°gina:</strong></li>
+								<li style="display: inline-block;"><a href="http://tabin.life/asesorias/index.html" style=" text-decoration: none;color: #ffffff; font-family: Arial;">http://tabin.life/asesorias/index.html</a></li>
+							</div>
+						</div>
+					</div>
+
+
+
+					<div style="background-color: #878888;">
+						<div style="height: 10px;"></div>
+						<div style="background-color: white;">
+							<div style="text-align: center;">
+								<h3 style="font-weight:700; line-height: 36px; color: #666666; font-size: 22px; font-family: Arial;">Hola</h3>
+								<h1 style="font-weight:700;line-height: 36px;color: #303030; font-size: 40px;font-family: Arial;">Querido cliente</h1>
+							</div>
+
+						<div class="item">
+						    <div style="text-align: center;">
+						        <h2 style="font-weight:700;line-height: 12px;color: #303030; font-size: 14px;font-family: Arial;">
+						        <br>
+						        <br>La informacion ha sido enviada exitosamente. 
+						        <br>Gracias por contactar a Kem Advisor.<br>
+								<br>Gracias por escogernos como su preferida opcion en el campo de las finanzas.
+								<br>Hemos recibido su informaci√≥n y muy pronto uno de nuestros agentes se pondr√° en cont√°cto con usted.
+								<br>Mientras espera, porque no ser sociable?
+								<br>
+								<br>Saludos,
+								<br>Kem Advisor Team
+								<br><a href=https://tabin.life/asesorias><img src="http://citadr.com/artes/programacion/asesorias/images/logo-jose-gregorio-garcia.png"/></a> 
+								
+								</h2>
+
+
+
+					<div style="background-color: #242427;">
+						<div class="footer-logo pull-left">
+							<img src="http://citadr.com/artes/programacion/asesorias/images/footer-logo.png" alt="">
+						</div>
+						<span style="color: #666666; font-size: 22px; font-family: Arial;">
+
+						<br><p>Designed by <p>
+								Copyright ¬© 2018 Kem Advisor - Todos los Derechos Reservados.<br>
+						</span>
+						
+						<div style="display: inline-block; float: right; margin-right: 19px;">
+							<a href="http://tabin.life/asesorias/contact.html" style="text-decoration: none;color: #666666; font-size: 22px; font-family: Arial;">Cont√°ctanos</a>
+						</div>
+					</div>
+
+
+							</div>
+						</div>
+						<div style="height: 10px;"></div>
+					</div>
+
+
+					</div>';
+
+		$yourWebsite = "tabin.life";
+		$yourEmail   = "info@tabin.life";
 	    $cabeceras = "From: $yourWebsite <$yourEmail>\n" . "Content-type: text/html" ;
 		mail($destino,$asunto,$cuerpo,$cabeceras);
 //var_dump("aqui");
 //die();	
+		
+		//================================Redirigir a otra pagina============================================	
+		//================================tipo de error json============================================			
 		$data=array("exito" => '1');
 		die(json_encode($data));
-		//===================================================Redirigir a otra pagina============================================				
-		//header("Location: contact.php");	
 	}	
 ?>
